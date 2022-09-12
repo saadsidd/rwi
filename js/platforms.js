@@ -2,37 +2,33 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 
 const DEG2RAD = Math.PI / 180;
-const platforms = [];
 
 class Platform {
   constructor(args) {
     const {
-      type,
+      type = 2, // Default static
       pos,
       rot = [0, 0, 0],
       color = 0xFF0000,
-      action
+      customize = function() {},
+      action = function() {
+        return function() {};
+      }
     } = args;
 
     this.body = new CANNON.Body();
     this.body.position.set(pos[0], pos[1], pos[2]);
     this.body.quaternion.setFromEuler(rot[0] * DEG2RAD, rot[1] * DEG2RAD, rot[2] * DEG2RAD);
-
-    if (type === 'kinematic') {
-      this.body.type = CANNON.Body.KINEMATIC;
-    } else {
-      this.body.type = CANNON.Body.STATIC;
-    }
+    this.body.type = type;
 
     this.mesh = new THREE.Mesh();
     this.mesh.material = new THREE.MeshStandardMaterial({ color });
     this.mesh.receiveShadow = true;
 
-    if (action) {
-      this.action = action();
-    } else {
-      this.action = function() {};
-    }
+    // Set any one-time custom parameters (such as fixed rotation or material)
+    customize.call(this);
+
+    this.action = action();
   }
 
   update(delta) {
@@ -77,7 +73,6 @@ class SpherePlatform extends Platform {
 }
 
 export {
-  platforms,
   BoxPlatform,
   CylinderPlatform,
   SpherePlatform,
