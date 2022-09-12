@@ -1,11 +1,29 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon';
 import { scene, world, camera, directionalLight } from './init.js';
+import { START_POSITION, FALL_LIMIT } from './level.js';
+
+const SPIN_SPEED = 30;
+const MOVEMENT_SPEED = 5;
+const PITCH_LIMIT = Math.PI / 3;
+
+// Keyboard controls
+const keyboard = {};
+document.addEventListener('keydown', event => keyboard[event.code] = true);
+document.addEventListener('keyup', event => keyboard[event.code] = false);
+
+// Prevent keys from 'sticking' while leaving pointerlock
+document.addEventListener('pointerlockchange', () => {
+  for (const key in keyboard) {
+    keyboard[key] = false;
+  }
+});
 
 // Mouse controls
 const quat = new CANNON.Quaternion();
 const inputVelocity = new THREE.Vector3(0, 0, 0);
 
+// Camera -> pitchObject -> yawObject
 const pitchObject = new THREE.Object3D();
 pitchObject.add(camera);
 const yawObject = new THREE.Object3D();
@@ -14,23 +32,14 @@ scene.add(yawObject);
 
 document.addEventListener('click', () => document.body.requestPointerLock());
 document.addEventListener('mousemove', event => {
-  if (document.pointerLockElement) {
+  if (document.pointerLockElement && player.body.position.y > FALL_LIMIT) {
     yawObject.rotation.y -= event.movementX * 0.002;
     pitchObject.rotation.x -= event.movementY * 0.002;
 
-    pitchObject.rotation.x = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, pitchObject.rotation.x));
+    // Ensure camera doesn't go past threshold when player looks up/down
+    pitchObject.rotation.x = Math.max(-PITCH_LIMIT, Math.min(PITCH_LIMIT, pitchObject.rotation.x));
   }
 });
-
-// Keyboard controls
-const keyboard = {};
-document.addEventListener('keydown', event => keyboard[event.code] = true);
-document.addEventListener('keyup', event => keyboard[event.code] = false);
-
-
-const SPIN_SPEED = 30;
-const MOVEMENT_SPEED = 5;
-const START_POSITION = [0, 22, 0];
 
 // Create the 4 color quadrants of the player ball
 const COLORS = [0xFFBE0B, 0x3A86FF, 0x37FC1E, 0xFF4F88];
@@ -55,10 +64,16 @@ const player = {
     angularDamping: 0.9
   }),
   mesh: mesh,
+  fallingCheck: function() {
+    if (this.body.position.y <= FALL_LIMIT) {
+      camera.lookAt(this.mesh.position);
+    } else {
+      yawObject.position.copy(this.body.position);
+    }
+  },
   sync: function() {
     this.mesh.position.copy(this.body.position);
     this.mesh.quaternion.copy(this.body.quaternion);
-    yawObject.position.copy(this.body.position);
     directionalLight.position.set(this.mesh.position.x, this.mesh.position.y + 10, this.mesh.position.z);
   },
   update: function(delta) {
@@ -90,13 +105,29 @@ const player = {
 
     inputVelocity.set(0, 0, 0);
 
+    this.fallingCheck();
     this.sync();
   }
 };
 
+player.body.name = 'player';
 world.addBody(player.body);
 scene.add(player.mesh);
 
+player.body.addEventListener('collide', event => {
+  if (event.body.name === 'ground') {
+    player.body.position.set(...START_POSITION);
+    player.body.velocity.set(0, 0, 0);
+    player.body.angularVelocity.set(0, 0, 0);
+  
+    pitchObject.rotation.set(0, 0, 0);
+    yawObject.rotation.set(0, 0, 0);
+    camera.rotation.set(0, 0, 0);
+  }
+});
+
 export {
+  pitchObject,
+  yawObject,
   player,
 };
