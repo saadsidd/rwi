@@ -1,8 +1,13 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon';
+import { scene } from './init.js';
 
 class Key {
   constructor(pos) {
+
+    this.collected = false;
+    this.i = 0;
+    this.posY = pos[1];
 
     this.body = new CANNON.Body({
       type: CANNON.Body.STATIC,
@@ -36,26 +41,37 @@ class Key {
     this.mesh.position.set(pos[0], pos[1], pos[2]);
     this.mesh.rotation.set(0, 0, -0.3);
 
-    this.collected = false;
-    this.i = 0;
-
   }
 
-  setCollisionListener(scene) {
+  setCollisionListener() {
     this.body.addEventListener('collide', event => {
       if (event.body.name === 'player' && !this.collected) {
         this.collected = true;
-        scene.remove(this.mesh);
-        console.log('key collected!~');
       }
     });
   }
 
+  reset() {
+    this.collected = false;
+    this.mesh.scale.set(1, 1, 1);
+    scene.add(this.mesh);
+  }
+
   update(delta) {
+    // Key is not collected yet
     if (!this.collected) {
       this.i += 0.1;
-      this.mesh.position.y = Math.sin(this.i / 2) * 5 * delta + 142;
+      this.mesh.position.y = Math.sin(this.i / 2) * 5 * delta + this.posY;
       this.mesh.rotation.y += 0.8 * delta;
+    } else {
+      // Key is collected and is shrinking
+      if (this.mesh.scale.x >= 0.1) {
+        this.mesh.rotation.y += 20 * delta;
+        this.mesh.scale.multiplyScalar(0.93);
+      } else {
+        // Key is finished shrinking
+        scene.remove(this.mesh);
+      }
     }
   }
 }

@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon';
-import { scene, world, camera, directionalLight } from './init.js';
+import { scene, camera, directionalLight, world, playerContactMaterial } from './init.js';
 import { START_POSITION, FALL_LIMIT } from './level.js';
 
 const SPIN_SPEED = 30;
 const MOVEMENT_SPEED = 5;
+// const MOVEMENT_SPEED = 20;
 const PITCH_LIMIT = Math.PI / 3;
 
 // Keyboard controls
@@ -60,6 +61,7 @@ const player = {
   body: new CANNON.Body({
     mass: 2,
     shape: new CANNON.Sphere(1),
+    material: playerContactMaterial,
     position: new CANNON.Vec3(...START_POSITION),
     angularDamping: 0.9
   }),
@@ -75,6 +77,15 @@ const player = {
     this.mesh.position.copy(this.body.position);
     this.mesh.quaternion.copy(this.body.quaternion);
     directionalLight.position.set(this.mesh.position.x, this.mesh.position.y + 10, this.mesh.position.z);
+  },
+  reset: function() {
+    this.body.position.set(...START_POSITION);
+    this.body.velocity.set(0, 0, 0);
+    this.body.angularVelocity.set(0, 0, 0);
+  
+    pitchObject.rotation.set(0, 0, 0);
+    yawObject.rotation.set(0, 0, 0);
+    camera.rotation.set(0, 0, 0);
   },
   update: function(delta) {
 
@@ -114,20 +125,13 @@ player.body.name = 'player';
 world.addBody(player.body);
 scene.add(player.mesh);
 
-player.body.addEventListener('collide', event => {
-  if (event.body.name === 'ground') {
-    player.body.position.set(...START_POSITION);
-    player.body.velocity.set(0, 0, 0);
-    player.body.angularVelocity.set(0, 0, 0);
-  
-    pitchObject.rotation.set(0, 0, 0);
-    yawObject.rotation.set(0, 0, 0);
-    camera.rotation.set(0, 0, 0);
-  }
-});
+const testAngle = new CANNON.Vec3(0, 0, 0);
 
 export {
   pitchObject,
   yawObject,
   player,
+
+  keyboard,
+  testAngle
 };

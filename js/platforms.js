@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon';
+import { groundContactMaterial } from './init.js';
 
 const DEG2RAD = Math.PI / 180;
 
@@ -9,8 +10,8 @@ class Platform {
       type = 2, // Default static
       pos,
       rot = [0, 0, 0],
-      color = 0xFF0000,
-      customize = function() {},
+      color = 0xBBBBBB,
+      reset = function() {},
       action = function() {
         return function() {};
       }
@@ -19,16 +20,15 @@ class Platform {
     this.body = new CANNON.Body();
     this.body.position.set(pos[0], pos[1], pos[2]);
     this.body.quaternion.setFromEuler(rot[0] * DEG2RAD, rot[1] * DEG2RAD, rot[2] * DEG2RAD);
+    this.body.material = groundContactMaterial;
     this.body.type = type;
 
     this.mesh = new THREE.Mesh();
     this.mesh.material = new THREE.MeshStandardMaterial({ color });
     this.mesh.receiveShadow = true;
 
-    // Set any one-time custom parameters (such as fixed rotation or material)
-    customize.call(this);
-
-    this.action = action();
+    this.reset = reset;
+    this.action = action.call(this);
   }
 
   update(delta) {

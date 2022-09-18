@@ -47,7 +47,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild(renderer.domElement);
 
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 300);
 camera.position.set(0, 2, 10);
 scene.add(camera);
 
@@ -62,14 +62,22 @@ window.addEventListener('resize', () => {
 const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.55);
 scene.add(ambientLight);
 
-const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1);
+const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
 directionalLight.castShadow = true;
 directionalLight.shadow.mapSize.width = 512;
 directionalLight.shadow.mapSize.height = 512;
+directionalLight.shadow.camera.left = -10;
+directionalLight.shadow.camera.right = 10;
+directionalLight.shadow.camera.top = 10;
+directionalLight.shadow.camera.bottom = -10;
 directionalLight.shadow.camera.near = 0.5;
 directionalLight.shadow.camera.far = 50;
-directionalLight.position.y += 10;
+directionalLight.position.set(0, 10, 0);
 scene.add(directionalLight);
+
+const extraDirectionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.3);
+extraDirectionalLight.position.set(0, 10, 10);
+scene.add(extraDirectionalLight);
 
 /*
   Setup CANNON world, ground plane
@@ -77,6 +85,14 @@ scene.add(directionalLight);
 const world = new CANNON.World({
   gravity: new CANNON.Vec3(0, -15, 0)
 });
+
+const playerContactMaterial = new CANNON.Material('player');
+const groundContactMaterial = new CANNON.Material('ground');
+
+world.addContactMaterial(new CANNON.ContactMaterial(playerContactMaterial, groundContactMaterial, {
+  friction: 0.02,
+  restitution: 0.2
+}));
 
 const ground = new CANNON.Body({
   type: CANNON.Body.STATIC,
@@ -95,6 +111,8 @@ export {
   directionalLight,
 
   world,
+  playerContactMaterial,
+  groundContactMaterial,
 };
 
 
@@ -107,11 +125,3 @@ scene.add(axesHelper);
 
 const shadowCamera = new THREE.CameraHelper(directionalLight.shadow.camera);
 // scene.add(shadowCamera);
-
-const plane = new THREE.Mesh(
-  new THREE.PlaneGeometry(20, 20),
-  new THREE.MeshStandardMaterial({color: 0x880000})
-);
-plane.receiveShadow = true;
-plane.rotation.x -= Math.PI / 2;
-// scene.add(plane);
