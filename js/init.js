@@ -9,7 +9,7 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 // scene.background = new THREE.Color(0x87CEEB);
 scene.background = new THREE.CubeTextureLoader()
-  .setPath('/assets/skybox/clearbluesky/')
+  .setPath('../assets/skybox/clearbluesky/')
   // clearbluesky
   // bluesunset
   // gloriouspink
@@ -88,9 +88,14 @@ const world = new CANNON.World({
 
 const playerContactMaterial = new CANNON.Material('player');
 const groundContactMaterial = new CANNON.Material('ground');
+const gripContactMaterial = new CANNON.Material('grip');
 
 world.addContactMaterial(new CANNON.ContactMaterial(playerContactMaterial, groundContactMaterial, {
   friction: 0.02,
+  restitution: 0.2
+}));
+world.addContactMaterial(new CANNON.ContactMaterial(playerContactMaterial, gripContactMaterial, {
+  friction: 0.9,
   restitution: 0.2
 }));
 
@@ -102,7 +107,6 @@ ground.name = 'ground';
 ground.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 world.addBody(ground);
 
-
 export {
   clock,
   scene,
@@ -113,6 +117,7 @@ export {
   world,
   playerContactMaterial,
   groundContactMaterial,
+  gripContactMaterial,
 };
 
 

@@ -7,9 +7,10 @@ const DEG2RAD = Math.PI / 180;
 class Platform {
   constructor(args) {
     const {
-      type = 2, // Default static
       pos,
       rot = [0, 0, 0],
+      type = 2, // Default static
+      contactMaterial = groundContactMaterial,
       color = 0xBBBBBB,
       reset = function() {},
       action = function() {
@@ -20,7 +21,7 @@ class Platform {
     this.body = new CANNON.Body();
     this.body.position.set(pos[0], pos[1], pos[2]);
     this.body.quaternion.setFromEuler(rot[0] * DEG2RAD, rot[1] * DEG2RAD, rot[2] * DEG2RAD);
-    this.body.material = groundContactMaterial;
+    this.body.material = contactMaterial;
     this.body.type = type;
 
     this.mesh = new THREE.Mesh();
@@ -73,6 +74,7 @@ class SpherePlatform extends Platform {
 }
 
 export {
+  Platform,
   BoxPlatform,
   CylinderPlatform,
   SpherePlatform,
