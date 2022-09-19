@@ -7,9 +7,10 @@ import * as CANNON from 'cannon';
 const clock = new THREE.Clock();
 
 const scene = new THREE.Scene();
-// scene.background = new THREE.Color(0x87CEEB);
+// scene.background = new THREE.Color(0x87CEEB);  // sky blue
+// scene.background = new THREE.Color(0xB3E0F2); // light blue
 scene.background = new THREE.CubeTextureLoader()
-  .setPath('../assets/skybox/clearbluesky/')
+  .setPath('../rwi/assets/skybox/clearbluesky/')
   // clearbluesky
   // bluesunset
   // gloriouspink
