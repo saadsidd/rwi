@@ -99,7 +99,7 @@ const animate = () => {
     platforms.forEach(platform => platform.update(delta));
     keys.forEach(key => key.update(delta));
 
-    moveLatestPlatform();
+    // moveLatestPlatform();
 
     // cannonDebugger.update();
   
