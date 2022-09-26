@@ -16,9 +16,6 @@ const DEG2RAD = Math.PI / 180;
 
 // Player constants
 const START_POSITION = [0, 144, -1.5];
-// const START_POSITION = [6, 140, -103.5];
-// const START_POSITION = [6, 143, -130];
-// const START_POSITION = [6, 135, -204];
 const FALL_LIMIT = 100;
 
 // Starting platform
@@ -130,7 +127,7 @@ platforms.push(new BoxPlatform({color: 0xFF2222, size: [1.5, 0.25, 1.5], pos: [-
 keys.push(new Key([-4, 137, -110.5]));
 
 // Sideways platform (key activated)
-platforms.push(new BoxPlatform({type: KINEMATIC, size: [5, 0.25, 10], pos: [6, 135, -122], rot: [0, 0, 90],
+platforms.push(new BoxPlatform({type: KINEMATIC, size: [3, 0.25, 10.5], pos: [6, 135, -122.5], rot: [0, 0, 90],
   action: function() {
     this.canSpin = true;
     return function() {
@@ -154,7 +151,7 @@ platforms.push(new BoxPlatform({type: KINEMATIC, size: [5, 0.25, 10], pos: [6, 1
 const cylinderShape = new CANNON.Cylinder(3, 3, 0.5, 8);
 const cylinderGeometry = new THREE.CylinderGeometry(3, 3, 0.5, 8);
 
-platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 134, -166],
+platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 135, -166], color: 0x999900,
   action: function() {
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, 30));
     this.body.addShape(cylinderShape, new CANNON.Vec3(30, 0, 0));
@@ -183,45 +180,65 @@ platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMateri
   }
 }));
 
-platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 134, -166],
+platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 135, -166], color: 0x333333,
   action: function() {
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, 24));
+    this.body.addShape(cylinderShape, new CANNON.Vec3(24, 0, 0));
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, -24));
+    this.body.addShape(cylinderShape, new CANNON.Vec3(-24, 0, 0));
 
     const mesh1 = new THREE.Mesh(cylinderGeometry, this.mesh.material);
     const mesh2 = new THREE.Mesh(cylinderGeometry, this.mesh.material);
+    const mesh3 = new THREE.Mesh(cylinderGeometry, this.mesh.material);
+    const mesh4 = new THREE.Mesh(cylinderGeometry, this.mesh.material);
     mesh1.receiveShadow = true;
     mesh2.receiveShadow = true;
+    mesh3.receiveShadow = true;
+    mesh4.receiveShadow = true;
     mesh1.position.set(0, 0, 24);
-    mesh2.position.set(0, 0, -24);
+    mesh2.position.set(24, 0, 0);
+    mesh3.position.set(0, 0, -24);
+    mesh4.position.set(-24, 0, 0);
     this.mesh.add(mesh1);
     this.mesh.add(mesh2);
+    this.mesh.add(mesh3);
+    this.mesh.add(mesh4);
 
     this.body.angularVelocity.y = -0.3;
     return function() {};
   }
 }));
 
-platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 134, -166],
+platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 135, -166], color: 0x999900,
   action: function() {
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, 18));
+    this.body.addShape(cylinderShape, new CANNON.Vec3(18, 0, 0));
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, -18));
+    this.body.addShape(cylinderShape, new CANNON.Vec3(-18, 0, 0));
 
     const mesh1 = new THREE.Mesh(cylinderGeometry, this.mesh.material);
     const mesh2 = new THREE.Mesh(cylinderGeometry, this.mesh.material);
+    const mesh3 = new THREE.Mesh(cylinderGeometry, this.mesh.material);
+    const mesh4 = new THREE.Mesh(cylinderGeometry, this.mesh.material);
     mesh1.receiveShadow = true;
     mesh2.receiveShadow = true;
+    mesh3.receiveShadow = true;
+    mesh4.receiveShadow = true;
     mesh1.position.set(0, 0, 18);
-    mesh2.position.set(0, 0, -18);
+    mesh2.position.set(18, 0, 0);
+    mesh3.position.set(0, 0, -18);
+    mesh4.position.set(-18, 0, 0);
     this.mesh.add(mesh1);
     this.mesh.add(mesh2);
+    this.mesh.add(mesh3);
+    this.mesh.add(mesh4);
 
     this.body.angularVelocity.y = 0.4;
     return function() {};
   }
 }));
 
-platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 134, -166],
+platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 135, -166], color: 0x333333,
   action: function() {
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, 12));
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, -12));
@@ -240,7 +257,7 @@ platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMateri
   }
 }));
 
-platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 134, -166],
+platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMaterial, pos: [6, 135, -166], color: 0x999900,
   action: function() {
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, 6));
     this.body.addShape(cylinderShape, new CANNON.Vec3(0, 0, -6));
@@ -260,15 +277,15 @@ platforms.push(new Platform({type: KINEMATIC, contactMaterial: gripContactMateri
 }));
 
 // Center cylinder platform
-platforms.push(new CylinderPlatform({color: 0xFF2222, size: [3, 0.5, 16], pos: [6, 134, -166]}));
+platforms.push(new CylinderPlatform({color: 0xFF2222, size: [3, 0.5, 16], pos: [6, 135, -166]}));
 
 // Third key
-keys.push(new Key([6, 136, -166]));
+keys.push(new Key([6, 137, -166]));
 
 // Final stretch
-platforms.push(new BoxPlatform({size: [5, 0.25, 5], pos: [6, 133, -204]}));
-platforms.push(new BoxPlatform({size: [3, 0.25, 4], pos: [6, 133, -213]}));
-platforms.push(new BoxPlatform({type:KINEMATIC, size: [1.5, 0.25, 3], pos: [6, 133, -220], rot: [90, 0, 0],
+platforms.push(new BoxPlatform({size: [5, 0.25, 5], pos: [6, 135, -204]}));
+platforms.push(new BoxPlatform({size: [3, 0.25, 4], pos: [6, 135, -213]}));
+platforms.push(new BoxPlatform({type:KINEMATIC, size: [1.5, 0.25, 3], pos: [6, 135, -220], rot: [90, 0, 0],
   action: function() {
     this.canSpin = true;
     return function() {
@@ -289,8 +306,12 @@ platforms.push(new BoxPlatform({type:KINEMATIC, size: [1.5, 0.25, 3], pos: [6, 1
 }));
 
 // Finishing platform
-platforms.push(new CylinderPlatform({size: [1.5, 0.5, 16], pos: [6, 133, -224.5], color: 'green'}));
-
+platforms.push(new CylinderPlatform({size: [1.5, 0.5, 16], pos: [6, 135, -224.5], color: 'green',
+  action: function() {
+    this.body.name = 'finish';
+    return function() {};
+  }
+}));
 
 
 
