@@ -3,9 +3,8 @@ import * as CANNON from 'cannon';
 import { scene, camera, directionalLight, world, playerContactMaterial } from './init.js';
 import { START_POSITION, FALL_LIMIT } from './level.js';
 
-const SPIN_SPEED = 30;
+const SPIN_SPEED = 50;
 const MOVEMENT_SPEED = 5;
-// const MOVEMENT_SPEED = 20;
 const PITCH_LIMIT = Math.PI / 3;
 
 // Keyboard controls
@@ -31,7 +30,6 @@ const yawObject = new THREE.Object3D();
 yawObject.add(pitchObject);
 scene.add(yawObject);
 
-document.addEventListener('click', () => document.body.requestPointerLock());
 document.addEventListener('mousemove', event => {
   if (document.pointerLockElement && player.body.position.y > FALL_LIMIT) {
     yawObject.rotation.y -= event.movementX * 0.002;
@@ -125,13 +123,10 @@ player.body.name = 'player';
 world.addBody(player.body);
 scene.add(player.mesh);
 
-const testAngle = new CANNON.Vec3(0, 0, 0);
-
 export {
   pitchObject,
   yawObject,
   player,
 
   keyboard,
-  testAngle
 };

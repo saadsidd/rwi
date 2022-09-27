@@ -2,41 +2,95 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon';
 
 /*
+  DOM elements to show/hide in overlay
+*/
+const overlay = document.getElementById('overlay');
+const overlayTitle = document.getElementById('overlay-title');
+
+const currentTimeDisplay = document.getElementById('current-time');
+const bestTimeDisplay = document.getElementById('best-time');
+
+const instructions = document.getElementById('instructions');
+
+const resultContainer = document.getElementById('result-container');
+const newRecord = document.getElementById('new-record');
+const completionTime = document.getElementById('completion-time').children[0];
+const completionTimeDifference = document.getElementById('completion-time').children[1];
+
+const buttonsContainer = document.getElementById('buttons-container');
+const mainButton = document.getElementById('main-button');
+const sideButton = document.getElementById('side-button');
+
+const newRecordMessage = ['You did it!', 'Nice one!', 'Well done!', 'Awesome!'];
+
+// Show/hide overlay and child elements (titles, instructions, buttons, etc)
+// setTimeout(s) to delay showing buttons to overcome error reentering Pointer Lock too quickly (~1s)
+const setOverlay = (state, currentTime, bestTime) => {
+  switch (state) {
+  case 'playing':
+    overlay.style.display = 'none';
+    bestTimeDisplay.innerText = `Best: ${bestTime || '--'}`;
+    break;
+  case 'paused':
+    overlay.style.display = 'flex';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    overlayTitle.innerText = 'Paused';
+    instructions.style.display = 'block';
+    resultContainer.style.display = 'none';
+    buttonsContainer.style.visibility = 'hidden';
+    mainButton.style.display = 'block';
+    sideButton.style.display = 'block';
+    setTimeout(() => {
+      buttonsContainer.style.visibility = 'visible';
+    }, 1100);
+    break;
+  case 'finished':
+    overlay.style.display = 'flex';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+    instructions.style.display = 'none';
+    
+    resultContainer.style.display = 'flex';
+    completionTime.innerText = `Time: ${currentTime} `;
+
+    // If current time lower than best time, show NewRecord! animation + make time difference green
+    if (bestTime === null || parseFloat(currentTime) < parseFloat(bestTime)) {
+      overlayTitle.innerText = newRecordMessage[Math.floor(Math.random() * newRecordMessage.length)];
+      newRecord.style.display = 'block';
+      completionTimeDifference.innerText = `(-${Math.abs(bestTime - currentTime).toFixed(1)})`;
+      completionTimeDifference.style.color = '#00FF00';
+    } else {
+      overlayTitle.innerText = 'Finished!';
+      newRecord.style.display = 'none';
+      completionTimeDifference.innerText = `(+${Math.abs(currentTime - bestTime).toFixed(1)})`;
+      completionTimeDifference.style.color = '#FF4747';
+    }
+
+    buttonsContainer.style.visibility = 'hidden';
+    mainButton.style.display = 'none';
+    sideButton.style.display = 'block';
+    setTimeout(() => {
+      buttonsContainer.style.visibility = 'visible';
+    }, 1100);
+    break;
+  }
+};
+
+/*
   Setup THREE clock, scene, renderer, camera, lights
 */
 const clock = new THREE.Clock();
 
 const scene = new THREE.Scene();
-// scene.background = new THREE.Color(0x87CEEB);  // sky blue
-// scene.background = new THREE.Color(0xB3E0F2); // light blue
 scene.background = new THREE.CubeTextureLoader()
   .setPath('../rwi/assets/skybox/clearbluesky/')
-  // clearbluesky
-  // bluesunset
-  // gloriouspink
-  // nightsky
-  // space
+  // .setPath('../assets/skybox/clearbluesky/')
   .load([
-    // 'px.jpg',
-    // 'nx.jpg',
-    // 'py.jpg',
-    // 'ny.jpg',
-    // 'pz.jpg',
-    // 'nz.jpg',
-
     'px.png',
     'nx.png',
     'py.png',
     'ny.png',
     'pz.png',
-    'nz.png',
-
-    // 'ft.jpg',
-    // 'bk.jpg',
-    // 'up.jpg',
-    // 'dn.jpg',
-    // 'rt.jpg',
-    // 'lf.jpg',
+    'nz.png'
   ]);
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
@@ -45,10 +99,10 @@ renderer.setPixelRatio(window.devicePixelRatio);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.shadowMap.type = THREE.PCFShadowMap;
 document.body.appendChild(renderer.domElement);
 
-const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 300);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
 camera.position.set(0, 2, 10);
 scene.add(camera);
 
@@ -84,7 +138,7 @@ scene.add(extraDirectionalLight);
   Setup CANNON world, ground plane
 */
 const world = new CANNON.World({
-  gravity: new CANNON.Vec3(0, -15, 0)
+  gravity: new CANNON.Vec3(0, -25, 0)
 });
 
 const playerContactMaterial = new CANNON.Material('player');
@@ -109,25 +163,22 @@ ground.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 world.addBody(ground);
 
 export {
+  // DOM
+  mainButton,
+  sideButton,
+  currentTimeDisplay,
+  setOverlay,
+
+  // THREE
   clock,
   scene,
   renderer,
   camera,
   directionalLight,
 
+  // CANNON
   world,
   playerContactMaterial,
   groundContactMaterial,
   gripContactMaterial,
 };
-
-
-// Helpers
-const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-// scene.add(directionalLightHelper);
-
-const axesHelper = new THREE.AxesHelper(5);
-scene.add(axesHelper);
-
-const shadowCamera = new THREE.CameraHelper(directionalLight.shadow.camera);
-// scene.add(shadowCamera);
