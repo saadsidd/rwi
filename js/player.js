@@ -3,10 +3,6 @@ import * as CANNON from 'cannon';
 import { scene, camera, directionalLight, world, playerContactMaterial } from './init.js';
 import { START_POSITION, FALL_LIMIT } from './level.js';
 
-const SPIN_SPEED = 50;
-const MOVEMENT_SPEED = 5;
-const PITCH_LIMIT = Math.PI / 3;
-
 // Keyboard controls
 const keyboard = {};
 document.addEventListener('keydown', event => keyboard[event.code] = true);
@@ -24,12 +20,14 @@ const quat = new CANNON.Quaternion();
 const inputVelocity = new THREE.Vector3(0, 0, 0);
 
 // Camera -> pitchObject -> yawObject
+const PITCH_LIMIT = Math.PI / 3;
 const pitchObject = new THREE.Object3D();
 pitchObject.add(camera);
 const yawObject = new THREE.Object3D();
 yawObject.add(pitchObject);
 scene.add(yawObject);
 
+document.addEventListener('click', () => document.body.requestPointerLock());
 document.addEventListener('mousemove', event => {
   if (document.pointerLockElement && player.body.position.y > FALL_LIMIT) {
     yawObject.rotation.y -= event.movementX * 0.002;
@@ -56,6 +54,8 @@ for (let i = 0; i < 4; i++) {
 directionalLight.target = mesh;
 
 const player = {
+  spinSpeed: 50,
+  movementSpeed: 20,
   body: new CANNON.Body({
     mass: 2,
     shape: new CANNON.Sphere(1),
@@ -74,7 +74,7 @@ const player = {
   sync: function() {
     this.mesh.position.copy(this.body.position);
     this.mesh.quaternion.copy(this.body.quaternion);
-    directionalLight.position.set(this.mesh.position.x, this.mesh.position.y + 10, this.mesh.position.z);
+    directionalLight.position.set(this.mesh.position.x, this.mesh.position.y + 2, this.mesh.position.z);
   },
   reset: function() {
     this.body.position.set(...START_POSITION);
@@ -100,17 +100,17 @@ const player = {
       inputVelocity.z = -1;
     }
     if (keyboard['Space']) {
-      // this.body.velocity.y += 0.75;
+      this.body.velocity.y += 0.75;
     }
 
     quat.setFromEuler(pitchObject.rotation.x, yawObject.rotation.y, 0);
     inputVelocity.applyQuaternion(quat);
 
-    this.body.angularVelocity.x += inputVelocity.x * SPIN_SPEED * delta;
-    this.body.angularVelocity.z += inputVelocity.z * SPIN_SPEED * delta;
+    this.body.angularVelocity.x += inputVelocity.x * this.spinSpeed * delta;
+    this.body.angularVelocity.z += inputVelocity.z * this.spinSpeed * delta;
 
-    this.body.velocity.x -= inputVelocity.z * MOVEMENT_SPEED * delta;
-    this.body.velocity.z += inputVelocity.x * MOVEMENT_SPEED * delta;
+    this.body.velocity.x -= inputVelocity.z * this.movementSpeed * delta;
+    this.body.velocity.z += inputVelocity.x * this.movementSpeed * delta;
 
     inputVelocity.set(0, 0, 0);
 
@@ -123,10 +123,13 @@ player.body.name = 'player';
 world.addBody(player.body);
 scene.add(player.mesh);
 
+const testAngle = new CANNON.Vec3(0, 0, 0);
+
 export {
   pitchObject,
   yawObject,
   player,
 
   keyboard,
+  testAngle
 };
