@@ -246,7 +246,7 @@ platforms.push(new CylinderPlatform({type: KINEMATIC, size: [4, 1, 3], pos: [20,
 
 
 // Ice platform
-const crackTexture = textureLoader.load('/assets/ice-texture.png');
+const crackTexture = textureLoader.load('../rwi/assets/ice-texture.png');
 crackTexture.wrapS = crackTexture.wrapT = THREE.RepeatWrapping;
 crackTexture.repeat.set(0.5, 0.5);
 crackTexture.rotation = Math.PI / 6;
@@ -405,7 +405,7 @@ platforms.push(new Platform({type: KINEMATIC, pos: [6, 142, -152],
 platforms.push(new BoxPlatform({size: [2, 0.25, 4], pos: [6, 132.5, -207]}));
 
 
-const bounceTexture = textureLoader.load('/assets/bounce-texture7.png');
+const bounceTexture = textureLoader.load('../rwi/assets/bounce-texture7.png');
 bounceTexture.wrapS = bounceTexture.wrapT = THREE.RepeatWrapping;
 bounceTexture.repeat.set(1, 4);
 // const bounceMaterial = new THREE.MeshStandardMaterial({ color: 0xFF50CB, map: bounceTexture });
@@ -596,7 +596,7 @@ platforms.push(new BoxPlatform({size: [2, 0.25, 2], pos: [51, 133.4, -329],
 platforms.push(new BoxPlatform({size: [2, 0.25, 5], pos: [51, 133.4, -336]}));
 
 // Ending/Finish platform
-const finishTexture = textureLoader.load('/assets/finish-texture.png');
+const finishTexture = textureLoader.load('../rwi/assets/finish-texture.png');
 finishTexture.wrapS = THREE.RepeatWrapping;
 finishTexture.wrapT = THREE.RepeatWrapping;
 finishTexture.repeat.set(5, 5);
@@ -679,7 +679,7 @@ platforms.push(new Platform({type: KINEMATIC, pos: [33.75, 131.5, -396],
 
 
 // Frictionless ice texture platform
-const iceTexture = textureLoader.load('/assets/ice-background2.png');
+const iceTexture = textureLoader.load('../rwi/assets/ice-background2.png');
 iceTexture.wrapS = THREE.MirroredRepeatWrapping;
 iceTexture.wrapT = THREE.MirroredRepeatWrapping;
 iceTexture.repeat.set(2, 1);

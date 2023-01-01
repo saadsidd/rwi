@@ -9,7 +9,7 @@ const clock = new THREE.Clock();
 const scene = new THREE.Scene();
 // scene.background = new THREE.Color(0x87CEEB);
 scene.background = new THREE.CubeTextureLoader()
-  .setPath('/assets/skybox/clearbluesky/')
+  .setPath('../rwi/assets/skybox/clearbluesky/')
   // clearbluesky
   // bluesunset
   // gloriouspink

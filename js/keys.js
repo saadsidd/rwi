@@ -3,10 +3,10 @@ import * as CANNON from 'cannon';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const gltfLoader = new GLTFLoader();
-const gltfPath = '/assets/key2-center-change.glb';
+const gltfPath = '../rwi/assets/key2-center-change.glb';
 
 const textureLoader = new THREE.TextureLoader();
-const mapPath = './assets/key-shadow-circle.png';
+const mapPath = '../rwi/assets/key-shadow-circle.png';
 
 const keyShape = new CANNON.Box(new CANNON.Vec3(0.3, 1, 0.3));
 const keyMaterial = new THREE.MeshStandardMaterial({ color: 0xAF8700 });
