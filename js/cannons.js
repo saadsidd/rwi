@@ -4,7 +4,7 @@ import { frictionlessContactMaterial } from './init.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const gltfLoader = new GLTFLoader();
-const gltfPath = '/assets/cannon.glb';
+const gltfPath = '../rwi/assets/cannon.glb';
 
 const armsMaterial = new THREE.MeshStandardMaterial({ color: 0x505050 });
 const barrelMaterial = new THREE.MeshStandardMaterial({ color: 0x101010 });
