@@ -100,7 +100,7 @@ const player = {
       inputVelocity.z = -1;
     }
     if (keyboard['Space']) {
-      this.body.velocity.y += 0.75;
+      this.body.velocity.y += 50 * delta;
     }
 
     quat.setFromEuler(pitchObject.rotation.x, yawObject.rotation.y, 0);

@@ -478,9 +478,9 @@ platforms.push(new BoxPlatform({type: KINEMATIC, size: [4, 0.25, 2], pos: [12, 1
   action: function() {
     let canSpin = true;
     let timer = 0;
-    return function() {
+    return function(delta) {
       if (canSpin) {
-        timer += 0.005;
+        timer += 0.5 * delta;
       }
       if (timer > 1) {
         timer = 0;
@@ -525,7 +525,7 @@ platforms.push(new Platform({type: KINEMATIC, pos: [-18, 132, -297],
     this.body.addShape(bladeShape, pos);
     this.body.addShape(bladeShape, pos, new CANNON.Quaternion().setFromEuler(0, 90 * DEG2RAD, 0));
     this.body.material = slipperyContactMaterial;
-    // this.body.angularVelocity.y = 1.5;
+    this.body.angularVelocity.y = 1.5;
 
     const bladeGeometry = new THREE.BoxGeometry(40, 4, 3);
     this.mesh.add(new THREE.Mesh(bladeGeometry, new THREE.MeshStandardMaterial({ color: 0xBAA520 })));
