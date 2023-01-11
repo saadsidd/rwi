@@ -1,15 +1,16 @@
 import * as THREE from 'three';
-import * as CANNON from 'cannon';
+import * as CANNON from 'cannon-es';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 /*
-  Setup THREE clock, scene, renderer, camera, lights
+  Setup THREE clock, scene, renderer, camera, lights, loaders
 */
 const clock = new THREE.Clock();
 
 const scene = new THREE.Scene();
-// scene.background = new THREE.Color(0x87CEEB);
 scene.background = new THREE.CubeTextureLoader()
-  .setPath('../rwi/assets/skybox/clearbluesky/')
+  .setPath('/assets/skybox/clearbluesky/')
   // clearbluesky
   // bluesunset
   // gloriouspink
@@ -60,7 +61,7 @@ window.addEventListener('resize', () => {
 });
 
 const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.55);
-scene.add(ambientLight);
+// scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
 directionalLight.castShadow = true;
@@ -73,14 +74,30 @@ directionalLight.shadow.camera.bottom = -10;
 directionalLight.shadow.camera.near = 0.5;
 directionalLight.shadow.camera.far = 20;
 directionalLight.position.set(0, 10, 0);
-scene.add(directionalLight);
+// scene.add(directionalLight);
 
 const extraDirectionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.3);
 extraDirectionalLight.position.set(0, 10, 10);
-scene.add(extraDirectionalLight);
+// scene.add(extraDirectionalLight);
+
+const loadingManager = new THREE.LoadingManager();
+const gltfLoader = new GLTFLoader(loadingManager);
+const rgbeLoader = new RGBELoader(loadingManager);
+
+// THREE Exports
+export {
+  clock,
+  scene,
+  renderer,
+  camera,
+  directionalLight,
+  loadingManager,
+  gltfLoader,
+  rgbeLoader,
+};
 
 /*
-  Setup CANNON world, ground plane
+  Setup CANNON world, contact materials, ground plane
 */
 const world = new CANNON.World({
   gravity: new CANNON.Vec3(0, -15, 0)
@@ -118,16 +135,12 @@ const ground = new CANNON.Body({
 });
 ground.name = 'ground';
 ground.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+ground.position.set(0, -100, 0);
 world.addBody(ground);
 
 
+// CANNON Exports
 export {
-  clock,
-  scene,
-  renderer,
-  camera,
-  directionalLight,
-
   world,
   playerContactMaterial,
   groundContactMaterial,
@@ -138,29 +151,5 @@ export {
 
 
 // Helpers
-const directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, 5);
-// scene.add(directionalLightHelper);
-
 const axesHelper = new THREE.AxesHelper(5);
 scene.add(axesHelper);
-
-const shadowCamera = new THREE.CameraHelper(directionalLight.shadow.camera);
-// scene.add(shadowCamera);
-
-
-// const loader = new THREE.TextureLoader();
-// const texture = loader.load('/assets/roundshadow.png');
-// texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-// const plane = new THREE.Mesh(
-//   new THREE.PlaneGeometry(1, 1, 1),
-//   new THREE.MeshStandardMaterial({ color: 0x808080, map: texture, transparent: true })
-// );
-// plane.position.set(5, 140, 0);
-// scene.add(plane);
-
-// const plane = new THREE.Mesh(
-//   new THREE.PlaneGeometry(5, 5),
-//   new THREE.MeshPhysicalMaterial({ color: 0xFFFFFF, roughness: 0, transmission: 0.5, thickness: 1 })
-// );
-// plane.position.set(0, 143, -5);
-// scene.add(plane);

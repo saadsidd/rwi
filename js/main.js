@@ -1,4 +1,4 @@
-import CannonDebugger from '../lib/cannon/cannon-es-debugger.js';
+import CannonDebugger from 'cannon-es-debugger';
 import {
   clock,
   scene,
@@ -7,7 +7,8 @@ import {
   world,
 } from './init.js';
 import { player, keyboard, testAngle } from './player.js';
-import { platforms, cannons, keys } from './level.js';
+import './level.js';
+import * as TWEEN from 'tween';
 
 let delta = 0;
 let paused = false;
@@ -26,76 +27,10 @@ document.addEventListener('pointerlockchange', () => {
 player.body.addEventListener('collide', event => {
   if (event.body.name === 'ground') {
     player.reset();
-    keys.forEach(key => key.reset(scene));
-    platforms.forEach(platform => platform.reset());
   }
 });
 
 const cannonDebugger = new CannonDebugger(scene, world);
-
-// For testing placement of latest platform when developing
-const DEG2RAD = Math.PI / 180;
-const latestPlatform = platforms[platforms.length - 1].body;
-
-const moveLatestPlatform = () => {
-  if (keyboard['KeyR']) {
-    if (keyboard['ArrowLeft']) {
-      testAngle.x -= 0.5;
-    }
-    if (keyboard['ArrowRight']) {
-      testAngle.x += 0.5;
-    }
-    if (keyboard['ArrowUp']) {
-      testAngle.z -= 0.5;
-    }
-    if (keyboard['ArrowDown']) {
-      testAngle.z += 0.5;
-    }
-    if (keyboard['MetaRight']) {
-      testAngle.y -= 0.5;
-    }
-    if (keyboard['ShiftLeft']) {
-      testAngle.y += 0.5;
-    }
-    latestPlatform.quaternion.setFromEuler(testAngle.x * DEG2RAD, testAngle.y * DEG2RAD, testAngle.z * DEG2RAD);
-    console.log(testAngle);
-  } else {
-    if (keyboard['ArrowLeft']) {
-      latestPlatform.position.x -= 0.05;
-      console.log(latestPlatform.position);
-    }
-    if (keyboard['ArrowRight']) {
-      latestPlatform.position.x += 0.05;
-      console.log(latestPlatform.position);
-    }
-    if (keyboard['ArrowUp']) {
-      latestPlatform.position.z -= 0.05;
-      console.log(latestPlatform.position);
-    }
-    if (keyboard['ArrowDown']) {
-      latestPlatform.position.z += 0.05;
-      console.log(latestPlatform.position);
-    }
-    if (keyboard['MetaRight']) {
-      latestPlatform.position.y -= 0.05;
-      console.log(latestPlatform.position);
-    }
-    if (keyboard['ShiftLeft']) {
-      latestPlatform.position.y += 0.05;
-      console.log(latestPlatform.position);
-    }
-  }
-};
-
-// scene.traverse(child => {
-//   if (child.isMesh) {
-//     console.log(child.material.color);
-//     const color = child.material.color;
-//     child.material = new THREE.MeshToonMaterial({ color });
-//   }
-// });
-
-console.log(`${platforms.length} platforms`);
 
 const animate = () => {
 
@@ -106,14 +41,10 @@ const animate = () => {
     delta = clock.getDelta();
 
     player.update(delta);
-    platforms.forEach(platform => platform.update(delta));
-    cannons.forEach(cannon => cannon.update(delta, player.mesh));
-    keys.forEach(key => key.update(delta, scene));
 
+    cannonDebugger.update();
 
-    moveLatestPlatform();
-
-    // cannonDebugger.update();
+    TWEEN.update();
   
     world.fixedStep();
     renderer.render(scene, camera);

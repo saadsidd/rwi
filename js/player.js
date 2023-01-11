@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import * as CANNON from 'cannon';
+import * as CANNON from 'cannon-es';
 import { scene, camera, directionalLight, world, playerContactMaterial } from './init.js';
-import { START_POSITION, FALL_LIMIT } from './level.js';
+
+const FALL_LIMIT = -30;
 
 // Keyboard controls
 const keyboard = {};
@@ -60,7 +61,7 @@ const player = {
     mass: 2,
     shape: new CANNON.Sphere(1),
     material: playerContactMaterial,
-    position: new CANNON.Vec3(...START_POSITION),
+    position: new CANNON.Vec3(0, 4, 0),
     angularDamping: 0.9
   }),
   mesh: mesh,
@@ -77,7 +78,7 @@ const player = {
     directionalLight.position.set(this.mesh.position.x, this.mesh.position.y + 2, this.mesh.position.z);
   },
   reset: function() {
-    this.body.position.set(...START_POSITION);
+    this.body.position.set(0, 4, 0);
     this.body.velocity.set(0, 0, 0);
     this.body.angularVelocity.set(0, 0, 0);
   

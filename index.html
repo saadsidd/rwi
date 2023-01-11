@@ -9,33 +9,17 @@
 </head>
 <body>
 
-  <div id="pause-screen"></div>
-  <div id="hud"></div>
-  <div id="title-screen">
-    <div id="title">ROLL<br>WITH<br>IT</div>
-    <div id="instructions">
-      WASD to roll<br>
-      MOUSE for camera<br>
-      ESC to pause
-    </div>
-    <p>Select a level:</p>
-    <div id="levels">
-      <div class="level">1</div>
-      <div class="level">2</div>
-      <div class="level">3</div>
-      <div class="level">4</div>
-    </div>
-  </div>
-
   <!-- Polyfill for browsers that don't support importmaps -->
   <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
-
   <script type="importmap">
     {
       "imports": {
         "three": "./lib/three/build/three.module.js",
         "three/addons/": "./lib/three/examples/jsm/",
-        "cannon": "./lib/cannon/dist/cannon-es.js"
+        "cannon-es": "./lib/cannon/dist/cannon-es.js",
+        "cannon-es-debugger": "./lib/cannon/cannon-es-debugger.js",
+        "tween": "https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.esm.js",
+        "dat.gui": "https://unpkg.com/dat.gui@0.7.9/build/dat.gui.module.js"
       }
     }
   </script>

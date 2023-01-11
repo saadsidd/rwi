@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
-
 * {
   box-sizing: border-box;
 }
@@ -7,46 +5,4 @@
 body {
   margin: 0;
   overflow: hidden;
-}
-
-#title-screen {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  background-color: rgba(255, 0, 0, 0.5);
-  font-family: 'Titan One', cursive;
-  
-  display: none;
-}
-
-#title {
-  font-size: 100px;
-  text-align: center;
-  color: white;
-  line-height: 90%;
-}
-
-#instructions {
-  color: white;
-  text-align: center;
-}
-
-#title-screen > p {
-  text-align: center;
-}
-
-#levels {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  font-size: large;
-}
-
-.level {
-  border: 3px solid black;
-  padding: 15px;
-}
-
-.level:hover {
-  border: 3px solid white;
 }
