@@ -46,7 +46,7 @@ renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-document.body.appendChild(renderer.domElement);
+// document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
 camera.position.set(0, 2, 10);
@@ -60,8 +60,8 @@ window.addEventListener('resize', () => {
   renderer.render(scene, camera);
 });
 
-const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.55);
-// scene.add(ambientLight);
+const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.5);
+scene.add(ambientLight);
 
 const directionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.7);
 directionalLight.castShadow = true;
@@ -74,7 +74,7 @@ directionalLight.shadow.camera.bottom = -10;
 directionalLight.shadow.camera.near = 0.5;
 directionalLight.shadow.camera.far = 20;
 directionalLight.position.set(0, 10, 0);
-// scene.add(directionalLight);
+scene.add(directionalLight);
 
 const extraDirectionalLight = new THREE.DirectionalLight(0xFFFFFF, 0.3);
 extraDirectionalLight.position.set(0, 10, 10);
@@ -103,13 +103,17 @@ const world = new CANNON.World({
   gravity: new CANNON.Vec3(0, -15, 0)
 });
 
+const COLLISIONGROUP_PLAYER = 1;
+const COLLISIONGROUP_GROUND = 2;
+const COLLISIONGROUP_PLATFORM = 4;
+
 const playerContactMaterial = new CANNON.Material('player');
 const groundContactMaterial = new CANNON.Material('ground');
 const slipperyContactMaterial = new CANNON.Material('slippery');
 const superSlipperyContactMaterial = new CANNON.Material('superSlippery');
 const frictionlessContactMaterial = new CANNON.Material('frictionless');
 
-const defaultFriction = 0.4;
+const defaultFriction = 0.02;
 const defaultRestitution = 0.3;
 
 world.addContactMaterial(new CANNON.ContactMaterial(playerContactMaterial, groundContactMaterial, {
@@ -131,7 +135,9 @@ world.addContactMaterial(new CANNON.ContactMaterial(playerContactMaterial, frict
 
 const ground = new CANNON.Body({
   type: CANNON.Body.STATIC,
-  shape: new CANNON.Plane()
+  shape: new CANNON.Plane(),
+  collisionFilterGroup: COLLISIONGROUP_GROUND,
+  collisionFilterMask: COLLISIONGROUP_PLAYER
 });
 ground.name = 'ground';
 ground.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
@@ -142,6 +148,9 @@ world.addBody(ground);
 // CANNON Exports
 export {
   world,
+  COLLISIONGROUP_PLAYER,
+  COLLISIONGROUP_GROUND,
+  COLLISIONGROUP_PLATFORM,
   playerContactMaterial,
   groundContactMaterial,
   slipperyContactMaterial,

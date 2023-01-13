@@ -1,4 +1,8 @@
-import { loadingManager, gltfLoader, rgbeLoader, scene, renderer, world } from './init.js';
+import {
+    loadingManager, gltfLoader, rgbeLoader,
+    scene, renderer,
+    world, COLLISIONGROUP_PLATFORM, COLLISIONGROUP_PLAYER, groundContactMaterial
+} from './init.js';
 import * as CANNON from 'cannon-es';
 import * as THREE from 'three';
 import * as TWEEN from 'tween';
@@ -6,28 +10,36 @@ import * as TWEEN from 'tween';
 let level;
 let vec3 = new THREE.Vector3();
 const platforms = {};
+const sync = [];
 
-const generateCubeBody = (size, position) => {
+const generateCubeBody = (size, pos, rot) => {
     return new CANNON.Body({
         shape: new CANNON.Box(new CANNON.Vec3(size.x, size.y, size.z)),
-        position
+        position: pos,
+        quaternion: new CANNON.Quaternion().setFromEuler(rot.x, rot.y, rot.z),
+        material: groundContactMaterial,
+        collisionFilterGroup: COLLISIONGROUP_PLATFORM,
+        collisionFilterMask: COLLISIONGROUP_PLAYER
     });
 };
 
-const generateCylinderBody = (size, position) => {
+const generateCylinderBody = (size, pos) => {
     return new CANNON.Body({
         shape: new CANNON.Cylinder(size.x, size.x, size.y * 2),
-        position
+        position: pos,
+        material: groundContactMaterial,
+        collisionFilterGroup: COLLISIONGROUP_PLATFORM,
+        collisionFilterMask: COLLISIONGROUP_PLAYER
     });
 };
 
-rgbeLoader.load('/assets/dancing_hall_1k.hdr', hdr => {
-    hdr.mapping = THREE.EquirectangularReflectionMapping;
-    scene.environment = hdr;
+// rgbeLoader.load('/assets/dancing_hall_1k.hdr', hdr => {
+    // hdr.mapping = THREE.EquirectangularReflectionMapping;
+    // scene.environment = hdr;
     // scene.background = hdr;
-});
+// });
 
-gltfLoader.load('/assets/level1-1.glb', gltf => {
+gltfLoader.load('/assets/level2.glb', gltf => {
     level = gltf.scene;
     scene.add(level);
 });
@@ -37,52 +49,75 @@ loadingManager.onLoad = () => {
 
     level.traverse(child => {
         if (child.isMesh) {
-            console.log(child);
             
             let body;
             const size = child.geometry.boundingBox.getSize(vec3).divideScalar(2);
             const position = child.position;
-
+            const rotation = child.rotation;
+            
             if (child.name.includes('Cube')) {
-                body = generateCubeBody(size, position);
+                // console.log(child);
+                body = generateCubeBody(size, position, rotation);
                 world.addBody(body);
             } else if (child.name === 'Start' || child.name === 'Finish') {
                 body = generateCylinderBody(size, position);
                 world.addBody(body);
             }
 
+            child.receiveShadow = true;
             platforms[child.name] = { mesh: child, body };
 
         }
 
     });
 
-    // const vec = new THREE.Vector3();
-    // console.log(gltf.scene.children[1].geometry.boundingBox.getSize(vec));
-    // console.log(generateCylinderBody(gltf.scene.children[1].geometry.boundingBox, gltf.scene.children[1].position));
-    // const starting = generateCylinderBody(gltf.scene.children[1].geometry.boundingBox.max, gltf.scene.children[1].position);
-    // world.addBody(starting);
 
-    // platforms['Cube006'].mesh.position.y += 5;
-    // let hit = false;
-    // platforms['Cube006'].mesh.material.transparent = true;
-    // platforms['Cube006'].body.addEventListener('collide', function() {
-    //     if (!hit) {
-    //         hit = true;
-    //         new TWEEN.Tween({r: 1, opacity: 1})
-    //         .to({r: 0, opacity: 0}, 1000)
-    //         // .onStart(() => platforms['Cube006'].mesh.material.color.set(0xFF0000))
-    //         .onUpdate(value => {
-    //             platforms['Cube006'].mesh.material.color.setRGB(value.r, 0, 0);
-    //             platforms['Cube006'].mesh.material.opacity = value.opacity;
-    //         })
-    //         .onComplete(() => this.collisionResponse = false)
-    //         .start();
-    //     }
-    // });
+    let hit = false;
+    const mesh6 = platforms['Cube006'].mesh;
+    const body6 = platforms['Cube006'].body;
+    mesh6.material.transparent = true;
+    body6.addEventListener('collide', function() {
+        if (!hit) {
+            hit = true;
+            new TWEEN.Tween({r: 0, opacity: 1})
+            .to({r: 1, opacity: 0.2}, 2000)
+            // .onStart(() => platforms['Cube006'].mesh.material.color.set(0xFF0000))
+            .onUpdate(value => {
+                mesh6.material.color.setRGB(value.r, 0, 0);
+                mesh6.material.opacity = value.opacity;
+            })
+            // .onComplete(() => this.collisionResponse = false)
+            .onComplete(() => {
+                this.type = CANNON.Body.DYNAMIC;
+                this.mass = 5;
+                this.updateMassProperties();
+            })
+            .start();
+        }
+    });
 
-    // platforms['Cube002'].body.velocity.y += 5;
-    // new TWEEN.Tween()
+    const body2 = platforms['Cube002'].body;
+    body2.type = CANNON.Body.KINEMATIC;
+
+    new TWEEN.Tween({y: -10})
+    .to({y: 10}, 1000)
+    .onUpdate(value => {
+        body2.velocity.y = value.y;
+        // console.log(body2.velocity.y.toFixed(2));
+    })
+    // .onRepeat(() => body2.position.y = 0)
+    // .onRepeat(() => )
+    .yoyo(true)
+    .repeat(Infinity)
+    .start();
+
+    sync.push(platforms['Cube002']);
+    sync.push(platforms['Cube006']);
+
+};
+
+export {
+    sync
 };
 
 // const body = new CANNON.Body({

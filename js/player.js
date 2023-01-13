@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import { scene, camera, directionalLight, world, playerContactMaterial } from './init.js';
+import { scene, camera, directionalLight, world, COLLISIONGROUP_PLAYER, playerContactMaterial } from './init.js';
 
 const FALL_LIMIT = -30;
 
@@ -56,13 +56,14 @@ directionalLight.target = mesh;
 
 const player = {
   spinSpeed: 50,
-  movementSpeed: 20,
+  movementSpeed: 0,
   body: new CANNON.Body({
     mass: 2,
     shape: new CANNON.Sphere(1),
     material: playerContactMaterial,
     position: new CANNON.Vec3(0, 4, 0),
-    angularDamping: 0.9
+    angularDamping: 0.9,
+    collisionFilterGroup: COLLISIONGROUP_PLAYER
   }),
   mesh: mesh,
   fallingCheck: function() {
@@ -102,6 +103,11 @@ const player = {
     }
     if (keyboard['Space']) {
       this.body.velocity.y += 50 * delta;
+    }
+    if (keyboard['ShiftLeft']) {
+      this.movementSpeed = 20;
+    } else {
+      this.movementSpeed = 0;
     }
 
     quat.setFromEuler(pitchObject.rotation.x, yawObject.rotation.y, 0);

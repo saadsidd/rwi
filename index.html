@@ -5,9 +5,54 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./styles/styles.css">
+  <link rel="stylesheet" href="./styles/new-record.css">
   <title>rwi</title>
 </head>
 <body>
+
+  <div id="timer-container">
+    <div id="current-time"></div>
+    <div id="best-time"></div>
+  </div>
+  <div id="overlay">
+    <div id="overlay-title">R<span>O</span>LL<br>WITH<br>IT</div>
+    <div id="instructions">
+      WASD to roll<br>
+      MOUSE to look<br>
+      ESC to pause
+    </div>
+    <div id="result-container">
+      <div id="new-record">
+        <span>N</span>
+        <span>e</span>
+        <span>w&nbsp;&nbsp;</span>
+        <span>R</span>
+        <span>e</span>
+        <span>c</span>
+        <span>o</span>
+        <span>r</span>
+        <span>d</span>
+        <span>!</span>
+        <br><br>
+      </div>
+      <div id="completion-time">
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <div id="levels-title">Levels:</div>
+    <div id="levels-container">
+      <div class="level">1</div>
+      <div class="level">2</div>
+      <div class="level">3</div>
+      <div class="level">4</div>
+      <div class="level">5</div>
+    </div>
+    <div id="buttons-container">
+      <div id="main-button" class="button"><img src="/assets/icons/play.svg"></div>
+      <div id="side-button" class="button"><img src="/assets/icons/restart.svg"></div>
+    </div>
+  </div>
 
   <!-- Polyfill for browsers that don't support importmaps -->
   <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>

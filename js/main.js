@@ -7,7 +7,7 @@ import {
   world,
 } from './init.js';
 import { player, keyboard, testAngle } from './player.js';
-import './level.js';
+import { sync } from './level.js';
 import * as TWEEN from 'tween';
 
 let delta = 0;
@@ -41,6 +41,11 @@ const animate = () => {
     delta = clock.getDelta();
 
     player.update(delta);
+
+    sync.forEach(platform => {
+      platform.mesh.position.copy(platform.body.position);
+      platform.mesh.quaternion.copy(platform.body.quaternion);
+    })
 
     cannonDebugger.update();
 

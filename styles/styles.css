@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
+
 * {
   box-sizing: border-box;
 }
@@ -5,4 +7,173 @@
 body {
   margin: 0;
   overflow: hidden;
+  cursor: default;
+  user-select: none;
+}
+
+#timer-container {
+  width: 100%;
+  position: absolute;
+
+  text-align: center;
+  font-family: monospace;
+  color: white;
+  text-shadow:
+    -0.15vh -0.15vh black,
+    0.15vh -0.15vh black,
+    -0.15vh 0.15vh black,
+    0.15vh 0.15vh black;
+}
+
+#current-time {
+  font-size: 7vh;
+  font-weight: 900;
+}
+
+#best-time {
+  font-size: 4vh;
+  margin-top: -1vh;
+}
+
+#overlay {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+
+  background: linear-gradient(63deg, rgba(255,255,255,1) 0%, rgba(115,210,222,1) 51%, rgba(255,255,255,1) 100%);
+  text-align: center;
+}
+
+#overlay-title {
+  font-size: 18vh;
+  font-family: 'Titan One', cursive;
+  color: white;
+  text-shadow: 1vh 1vh sienna;
+  line-height: 90%;
+  letter-spacing: 2vh;
+}
+
+#overlay-title > span {
+  display: inline-block;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-weight: 900;
+  padding-left: 1.5vh;
+  animation: spin 1s linear infinite;
+  text-shadow: none;
+
+  background:
+    -webkit-linear-gradient(
+      130deg,
+      rgba(58,134,255,1) 29%,
+      rgba(255,190,11,1) 30%,
+      rgba(255,181,19,1) 46%,
+      rgba(252,76,102,1) 47%,
+      rgba(252,70,107,1) 67%,
+      rgba(55,252,30,1) 68%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg) }
+}
+
+#instructions {
+  color: white;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: 900;
+  font-size: 3vh;
+  text-shadow: 0.25vh 0.25vh black;
+}
+
+#result-container {
+  display: none;
+  height: 25vh;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+#completion-time {
+  color: white;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 5vh;
+  font-weight: 900;
+}
+
+/* Levels title / buttons */
+#levels-title {
+  color: white;
+  font-family: 'Titan One', cursive;
+  margin-bottom: -2vh;
+  font-size: 4vh;
+  text-shadow: 0.25vh 0.25vh black;
+}
+
+#levels-container {
+  display: flex;
+}
+
+.level {
+  width: 6vh;
+  height: 6vh;
+
+  margin: 1vh 0.5vh;
+  background-color: #FF4F88;
+  opacity: 0.3;
+
+  color: white;
+  line-height: 6vh;
+  font-size: 3vh;
+  font-family: 'Titan One', cursive;
+
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.level:nth-child(1) {
+  opacity: 1;
+}
+
+.level:hover {
+  background-color: #FFBC42;
+}
+
+/* Home and Restart buttons */
+#buttons-container {
+  width: 40vh;
+  height: 10vh;
+
+  display: flex;
+  display: none;
+  justify-content: center;
+  gap: 1vh;
+}
+
+.button {
+  width: 100%;
+  border-radius: 2vh;
+  background-color: #FF4F88;
+  cursor: pointer;
+  border: 0.5vh solid black;
+  box-shadow: 0.25vh 0.25vh black;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #FFBC42;
+}
+
+#side-button {
+  display: none;
+}
+
+#buttons-container img {
+  height: 100%;
+  padding: 1vh;
 }
