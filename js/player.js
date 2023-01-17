@@ -23,12 +23,14 @@ const inputVelocity = new THREE.Vector3(0, 0, 0);
 // Camera -> pitchObject -> yawObject
 const PITCH_LIMIT = Math.PI / 3;
 const pitchObject = new THREE.Object3D();
+pitchObject.name = 'Pitch Object';
 pitchObject.add(camera);
 const yawObject = new THREE.Object3D();
+yawObject.name = 'Yaw Object';
 yawObject.add(pitchObject);
 scene.add(yawObject);
 
-document.addEventListener('click', () => document.body.requestPointerLock());
+// Mouse to camera movement
 document.addEventListener('mousemove', event => {
   if (document.pointerLockElement && player.body.position.y > FALL_LIMIT) {
     yawObject.rotation.y -= event.movementX * 0.002;
@@ -42,11 +44,13 @@ document.addEventListener('mousemove', event => {
 // Create the 4 color quadrants of the player ball
 const COLORS = [0xFFBE0B, 0x3A86FF, 0x37FC1E, 0xFF4F88];
 const mesh = new THREE.Mesh();
+mesh.name = 'Player';
 for (let i = 0; i < 4; i++) {
   let quarterMesh = new THREE.Mesh(
     new THREE.SphereGeometry(1, 32, 16, Math.PI / 2 * i, Math.PI / 2),
     new THREE.MeshStandardMaterial({ color: COLORS[i] })
   );
+  quarterMesh.name = 'Color Quadrant';
   quarterMesh.castShadow = true;
   mesh.add(quarterMesh);
 }
@@ -85,6 +89,7 @@ const player = {
   
     pitchObject.rotation.set(0, 0, 0);
     yawObject.rotation.set(0, 0, 0);
+    yawObject.position.copy(this.body.position);
     camera.rotation.set(0, 0, 0);
   },
   update: function(delta) {
@@ -130,13 +135,4 @@ player.body.name = 'player';
 world.addBody(player.body);
 scene.add(player.mesh);
 
-const testAngle = new CANNON.Vec3(0, 0, 0);
-
-export {
-  pitchObject,
-  yawObject,
-  player,
-
-  keyboard,
-  testAngle
-};
+export default player;
