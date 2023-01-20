@@ -1,0 +1,26 @@
+#buttons-container {
+  display: none;
+  height: 8vh;
+}
+
+.nav-button {
+  width: 20vh;
+  height: 8vh;
+
+  background-color: #ff6f9c;
+  border: 0.5vh solid black;
+  border-radius: 5vh;
+  margin: 0vh 2vh;
+
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.nav-button:hover {
+  background-color: #FFBC42;
+}
+
+.nav-button > img {
+  height: 100%;
+  padding: 1.5vh;
+}

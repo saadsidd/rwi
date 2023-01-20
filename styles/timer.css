@@ -1,0 +1,15 @@
+#current-time {
+  width: 100%;
+  position: absolute;
+
+  text-align: center;
+  font-family: monospace;
+  font-size: 7vh;
+  font-weight: 900;
+  color: white;
+  text-shadow:
+    -0.15vh -0.15vh black,
+    0.15vh -0.15vh black,
+    -0.15vh 0.15vh black,
+    0.15vh 0.15vh black;
+}

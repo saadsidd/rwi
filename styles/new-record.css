@@ -1,13 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
-
 /* Text shadow color variable */
 :root {
   --ts-color: #8D8620;
 }
 
 #new-record {
-  /* display: none; */
-  font-family: 'Titan One', cursive;
+  display: none;
   user-select: none;
 }
 

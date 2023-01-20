@@ -1,0 +1,49 @@
+#levels-container {
+  display: flex;
+  flex-direction: column;
+}
+
+#level-select-label {
+  color: #ffea77;
+  font-size: 4vh;
+  text-shadow: 0.25vh 0.35vh #ad0000;
+  margin-bottom: 2vh;
+}
+
+#level-tiles {
+  display: flex;
+}
+
+/* .tile {
+  opacity: 0.25;
+} */
+
+/* .tile:nth-child(1) {
+  opacity: 1;
+} */
+
+.level {
+  width: 8vh;
+  height: 8vh;
+  
+  margin: 0.5vh 1.5vh;
+  border-width: 0;
+  background-color: #FF4F88;
+  
+  color: white;
+  line-height: 6vh;
+  font-size: 4vh;
+  
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.level:hover {
+  background-color: #FFBC42;
+}
+
+.best-time {
+  color: black;
+  font-size: 3vh;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
