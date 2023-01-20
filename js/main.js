@@ -7,6 +7,7 @@ import {
   playButton,
   completionTime,
   setOverlay,
+  updateLevelTimes,
   clock,
   meshBodySync,
   scene,
@@ -71,35 +72,37 @@ const destroyLevel = () => {
   console.log('Removed: ', renderer.info.memory.geometries, renderer.info.memory.textures);
 };
 
+// Save time to localStorage if better than previous, and show New Record!
 const finishLevel = (level) => {
 
   finished = true;
   const prevTime = parseFloat(localStorage.getItem(level));
   const currTime = parseFloat(currentTime);
 
-  if (isNaN(prevTime) || prevTime > currTime) {
+  completionTime.children[0].textContent = `${currTime.toFixed(1)}`;
 
-    localStorage.setItem(level, currTime);
+  if (isNaN(prevTime)) {
+
+    completionTime.children[1].textContent = ' (The time to beat!)';
+    completionTime.children[1].style.color = '#ffffff';
+    localStorage.setItem(level, currTime.toFixed(1));
+    setOverlay('finished_better_time');
+
+  } else if (currTime < prevTime) {
+
+    completionTime.children[1].textContent = ` (${(currTime - prevTime).toFixed(1)})`;
+    completionTime.children[1].style.color = '#6aff6a';
+    localStorage.setItem(level, currTime.toFixed(1));
     setOverlay('finished_better_time');
 
   } else {
-    setOverlay('finished');
-  }
 
-  completionTime.children[0].textContent = `${currTime.toFixed(1)}`;
-  if (isNaN(prevTime)) {
-    completionTime.children[1].textContent = ' (The time to beat!)';
-    completionTime.children[1].style.color = '#ffffff';
-  } else if (prevTime > currTime) {
-    completionTime.children[1].textContent = ` (${(currTime - prevTime).toFixed(1)})`;
-    completionTime.children[1].style.color = '#6aff6a';
-  } else {
     completionTime.children[1].textContent = ` (+${(currTime - prevTime).toFixed(1)})`;
     completionTime.children[1].style.color = '#ff4a4a';
+    setOverlay('finished');
+
   }
 
-  // completionTime.children[1].textContent = ` (+${prevTime - currTime})`;
-  console.log(completionTime.children[0]);
   document.exitPointerLock();
 
 };
@@ -122,6 +125,7 @@ levelTiles.addEventListener('click', event => {
 homeButton.addEventListener('click', () => {
   currentTime = 0;
   setOverlay('home');
+  updateLevelTimes();
 });
 
 // Reset player position and timer then resume level

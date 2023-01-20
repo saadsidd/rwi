@@ -91,6 +91,20 @@ const setOverlay = (mode) => {
 
 };
 
+const updateLevelTimes = () => {
+
+  for (let i = 0; i < 5; i++) {
+    const time = parseFloat(localStorage.getItem(`level_${i + 1}`));
+    const showTime = levelTiles.children[i].children[1];
+    if (!isNaN(time)) {
+      showTime.textContent = time.toFixed(1);
+    }
+  }
+
+};
+
+updateLevelTimes();
+
 // DOM Exports
 export {
   currentTimeDisplay,
@@ -99,7 +113,8 @@ export {
   restartButton,
   playButton,
   completionTime,
-  setOverlay
+  setOverlay,
+  updateLevelTimes
 };
 
 
