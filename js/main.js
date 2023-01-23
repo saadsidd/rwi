@@ -1,5 +1,8 @@
 import CannonDebugger from 'cannon-es-debugger';
 import {
+  meshBodySync,
+  levelResets,
+  // DOM
   currentTimeDisplay,
   levelTiles,
   homeButton,
@@ -8,12 +11,13 @@ import {
   completionTime,
   setOverlay,
   updateLevelTimes,
+  // THREE
   clock,
-  meshBodySync,
   scene,
   renderer,
   camera,
-  world,
+  // CANNON
+  world
 } from './init.js';
 import player from './player.js';
 import loadLevel1 from './levels/level-1.js';
@@ -41,17 +45,23 @@ const levelSelect = {
 // Reset player and timer on collision with ground
 player.body.addEventListener('collide', event => {
   if (event.body.name === 'ground') {
-    player.reset();
-    clock.elapsedTime = 0;
-    currentTime = 0;
+    restartLevel();
   }
 });
+
+const restartLevel = () => {
+  player.reset();
+  levelResets.forEach(resetCallback => resetCallback());
+  clock.elapsedTime = 0;
+  currentTime = 0;
+}
 
 const destroyLevel = () => {
 
   meshBodySync.length = 0;
+  levelResets.length = 0;
 
-  // Remove from scene
+  // Remove from THREE scene
   const levelGLTF = scene.getObjectByName('Scene');
   if (levelGLTF) {
     scene.remove(levelGLTF);
@@ -63,24 +73,33 @@ const destroyLevel = () => {
     });
   }
 
-  // Remove from world
+  // Remove from CANNON world (except player and ground)
   const bodies = world.bodies.slice(2);
   for (const body of bodies) {
     world.removeBody(body);
   }
 
-  console.log('Removed: ', renderer.info.memory.geometries, renderer.info.memory.textures);
+  // Remove any preStep listeners
+  if (world._listeners && world._listeners.preStep) {
+    world._listeners.preStep.length = 0;
+  }
+
+
+  console.log('After removing: ', renderer.info.memory.geometries, renderer.info.memory.textures);
 };
 
 // Save time to localStorage if better than previous, and show New Record!
+// Otherwise just show time
 const finishLevel = (level) => {
 
   finished = true;
   const prevTime = parseFloat(localStorage.getItem(level));
   const currTime = parseFloat(currentTime);
 
+  // Showing time to complete level
   completionTime.children[0].textContent = `${currTime.toFixed(1)}`;
 
+  // Below is determining whether to show red(-)/green(+) time difference
   if (isNaN(prevTime)) {
 
     completionTime.children[1].textContent = ' (The time to beat!)';
@@ -107,13 +126,10 @@ const finishLevel = (level) => {
 
 };
 
-export { finishLevel };
-
-// Dispose any already loaded meshes, reset player position, then load level
+// Loading levels after reseting player position back to start
 levelTiles.addEventListener('click', event => {
 
   if (event.target.tagName === 'BUTTON') {
-    destroyLevel();
     player.reset();
     levelSelect[event.target.textContent]();
     document.body.requestPointerLock();
@@ -123,26 +139,34 @@ levelTiles.addEventListener('click', event => {
 
 // Go back to home page
 homeButton.addEventListener('click', () => {
+
   currentTime = 0;
+  destroyLevel();
   setOverlay('home');
   updateLevelTimes();
+
 });
 
 // Reset player position and timer then resume level
 restartButton.addEventListener('click', () => {
-  currentTime = 0;
-  player.reset();
+
+  restartLevel();
   document.body.requestPointerLock();
+
 });
 
 // Continue playing
 playButton.addEventListener('click', () => {
+
   document.body.requestPointerLock();
+
 });
 
 // If locked then playing so unpause, remove overlay, and start timer
 // Otherwise pause, display paused overlay, and stop timer
+// However if finished = true, show "Finished!" & finishing time, also remove resume button
 document.addEventListener('pointerlockchange', () => {
+
   if (document.pointerLockElement) {
 
     paused = false;
@@ -161,13 +185,12 @@ document.addEventListener('pointerlockchange', () => {
     currentTime = parseFloat(clock.elapsedTime.toFixed(1));
     clock.stop();
     setOverlay('paused');
+
   }
   
 });
 
 const animate = () => {
-
-  requestAnimationFrame(animate);
   
   if (!paused) {
 
@@ -183,7 +206,7 @@ const animate = () => {
       platform.mesh.quaternion.copy(platform.body.quaternion);
     });
 
-    // cannonDebugger.update();
+    cannonDebugger.update();
 
     TWEEN.update();
   
@@ -191,7 +214,13 @@ const animate = () => {
     renderer.render(scene, camera);
 
   }
+
+  requestAnimationFrame(animate);
   
+};
+
+export {
+  finishLevel
 };
 
 animate();

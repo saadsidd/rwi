@@ -2,6 +2,9 @@ import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+// export const PATH = '../rwi/';  // for gh pages
+export const PATH = '';      // for local
+
 /*
   DOM elements
 */
@@ -79,6 +82,7 @@ const setOverlay = (mode) => {
     resultContainer.style.display = 'flex';
     newRecord.style.display = 'none';
     buttonsContainer.style.display = 'flex';
+    // Ensure pointer lock has enough time to reset to prevent error
     setTimeout(() => {
       homeButton.style.display = 'block';
       restartButton.style.display = 'block';
@@ -123,10 +127,11 @@ export {
 */
 const clock = new THREE.Clock();
 const meshBodySync = [];
+const levelResets = [];
 
 const scene = new THREE.Scene();
 scene.background = new THREE.CubeTextureLoader()
-  .setPath('/assets/skybox/clearbluesky/').load([
+  .setPath(PATH + 'assets/skybox/clearbluesky/').load([
     'px.png',
     'nx.png',
     'py.png',
@@ -179,6 +184,7 @@ const gltfLoader = new GLTFLoader(loadingManager);
 export {
   clock,
   meshBodySync,
+  levelResets,
   scene,
   renderer,
   camera,
@@ -206,8 +212,8 @@ const slipperyContactMaterial = new CANNON.Material('slippery');
 const superSlipperyContactMaterial = new CANNON.Material('superSlippery');
 const frictionlessContactMaterial = new CANNON.Material('frictionless');
 
-const defaultFriction = 0.02;
-const defaultRestitution = 0.3;
+const defaultFriction = 0.03;
+const defaultRestitution = 0.2;
 
 world.addContactMaterial(new CANNON.ContactMaterial(playerContactMaterial, groundContactMaterial, {
   friction: defaultFriction,
