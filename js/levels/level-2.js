@@ -1,17 +1,14 @@
-import { scene, world, gltfLoader, loadingManager, meshBodySync } from '../init.js';
+import { PATH, scene, world, gltfLoader, meshBodySync } from '../init.js';
 import { vec3, generateCubeBody, generateCylinderBody } from './helpers.js';
-
-let level;
 
 export default function() {
 
-	gltfLoader.load('/assets/level2.glb', gltf => {
-		level = gltf.scene;
+	gltfLoader.load(PATH + 'assets/level2.glb', gltf => {
+
+		const platforms = {};
+		const level = gltf.scene;
 		scene.add(level);
-	});
-	
-	loadingManager.onLoad = () => {
-	
+
 		level.traverse(child => {
 
 			if (child.isMesh) {
@@ -34,6 +31,6 @@ export default function() {
 	
 		});
 
-	};
+	});
 
 };
