@@ -206,7 +206,7 @@ const animate = () => {
       platform.mesh.quaternion.copy(platform.body.quaternion);
     });
 
-    cannonDebugger.update();
+    // cannonDebugger.update();
 
     TWEEN.update();
   
