@@ -1,14 +1,17 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
+import * as TWEEN from 'tween';
 import {
+  levelResets,
   groundContactMaterial,
+  superSlipperyContactMaterial,
   COLLISIONGROUP_PLATFORM,
   COLLISIONGROUP_PLAYER
 } from '../init.js';
+import { finishLevel } from '../main.js';
 
-// Helpers for creating various bodies from gltf meshes
+// Helpers for creating various bodies from gltf meshes and collision/tween events
 
-const meshBodySync = [];
 const vec3 = new THREE.Vector3();
 
 const generateCubeBody = (size, pos, rot) => {
@@ -32,8 +35,71 @@ const generateCylinderBody = (size, pos) => {
   });
 };
 
+const addDisappearOnCollision = ({mesh, body}) => {
+
+  mesh.material.transparent = true;
+  const redToInvisible = new TWEEN.Tween(mesh.material)
+  .to({opacity: 0}, 1000)
+  .onStart(() => mesh.material.color.setHex(0xFF0000))
+  .onComplete(() => body.collisionResponse = false);
+
+  body.addEventListener('collide', () => {
+
+    if (body.collisionResponse) {
+      redToInvisible.start();
+    }
+
+  });
+
+  levelResets.push(() => {
+
+    body.collisionResponse = true;
+    mesh.material.opacity = 1;
+    mesh.material.color.setHex(0xCCCCCC);
+
+  });
+
+};
+
+const addSlipOnCollision = ({mesh, body}) => {
+
+  const whiteToBlue = new TWEEN.Tween(mesh.material.color)
+  .to({r: 0.24, g: 0.75, b: 1}, 1000)
+  .onComplete(() => body.material = superSlipperyContactMaterial);
+
+  body.addEventListener('collide', () => {
+
+    if (mesh.material.color.getHexString() === 'cccccc') {
+      console.log('turn blue');
+      whiteToBlue.start();
+    }
+
+  });
+
+  levelResets.push(() => {
+
+    mesh.material.color.setHex(0xCCCCCC);
+    body.material = groundContactMaterial;
+
+  });
+
+};
+
+const addFinishLevelOnCollision = ({mesh, body}, level) => {
+
+  body.addEventListener('collide', () => {
+
+    finishLevel(level);
+
+  });
+
+};
+
 export {
   vec3,
   generateCubeBody,
   generateCylinderBody,
+  addDisappearOnCollision,
+  addSlipOnCollision,
+  addFinishLevelOnCollision,
 };
