@@ -41,7 +41,7 @@ document.addEventListener('mousemove', event => {
   }
 });
 
-// Create the 4 color quadrants of the player ball
+// Create the 4 color quadrants of the player ball (yellow, blue, green, red)
 const COLORS = [0xFFBE0B, 0x3A86FF, 0x37FC1E, 0xFF4F88];
 const mesh = new THREE.Mesh();
 mesh.name = 'Player';
@@ -106,14 +106,14 @@ const player = {
     if (keyboard['KeyD']) {
       inputVelocity.z = -1;
     }
-    if (keyboard['Space']) {
-      this.body.velocity.y += 50 * delta;
-    }
-    if (keyboard['ShiftLeft']) {
-      this.movementSpeed = 20;
-    } else {
-      this.movementSpeed = 0;
-    }
+    // if (keyboard['Space']) {
+    //   this.body.velocity.y += 50 * delta;
+    // }
+    // if (keyboard['ShiftLeft']) {
+    //   this.movementSpeed = 20;
+    // } else {
+    //   this.movementSpeed = 0;
+    // }
 
     quat.setFromEuler(pitchObject.rotation.x, yawObject.rotation.y, 0);
     inputVelocity.applyQuaternion(quat);

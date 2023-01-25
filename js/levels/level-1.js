@@ -50,7 +50,7 @@ export default function() {
 		let flingActive = false;
 
 		const whiteToGreen = new TWEEN.Tween(flingMesh.material.color).to({r: 1, g: 1, b: 0}, 1000).onComplete(() => flingBody.angularVelocity.x = Math.PI * 2);
-		const stopRotation = new TWEEN.Tween(flingBody.angularVelocity).to({x: 0}, 0).delay(495).onComplete(() => flingBody.quaternion.setFromEuler(0, 0, 0));
+		const stopRotation = new TWEEN.Tween(flingBody.angularVelocity).to({x: 0}, 0).delay(495).onComplete(() => flingBody.quaternion.setFromEuler(0, Math.PI / 2, 0));
 		const greenToWhite = new TWEEN.Tween(flingMesh.material.color).to({r: 0.8, g: 0.8, b: 0.8}, 1000).delay(495).onComplete(() => flingActive = false);
 		whiteToGreen.chain(stopRotation);
 		stopRotation.chain(greenToWhite);
